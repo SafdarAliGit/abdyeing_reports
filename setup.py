@@ -10,7 +10,7 @@ setup(
 	name="abdyeing_reports",
 	version=version,
 	description="Abdyeing Reports",
-	author="safdar ali",
+	author="Safdar Ali",
 	author_email="safdar211@gmail.com",
 	packages=find_packages(),
 	zip_safe=False,

@@ -2,7 +2,7 @@ from . import __version__ as app_version
 
 app_name = "abdyeing_reports"
 app_title = "Abdyeing Reports"
-app_publisher = "safdar ali"
+app_publisher = "Safdar Ali"
 app_description = "Abdyeing Reports"
 app_email = "safdar211@gmail.com"
 app_license = "MIT"
