@@ -50,6 +50,86 @@ def get_data(filters=None):
     # sales_result = items_heading + sales_result
     sales_result.append({"account": "<b>ITEMS TOTAL</b>", "amount": total_item, "percent": total_item_percent})
 
+    finish_sales_query = """
+            SELECT 
+                "" AS account,
+                SUM(sii.amount) AS amount,
+                0 AS percent
+            FROM
+                `tabSales Invoice Item` AS sii
+            JOIN 
+                `tabSales Invoice` AS si 
+                ON sii.parent = si.name
+            WHERE
+                si.docstatus = 1 
+                AND si.is_return = 0
+                AND sii.item_group = 'Finish'
+                AND si.posting_date >= %(from_date)s AND si.posting_date <= %(to_date)s
+        """
+
+    finish_sales_result = frappe.db.sql(
+        finish_sales_query,
+        {
+            "from_date": filters.get("from_date"),
+            "to_date": filters.get("to_date")
+        },
+        as_dict=True
+    )
+    finish_total_item = 0
+    # total_amount_item = sum(item["amount"] for item in sales_result)
+    finish_total_item = sum(item["amount"] for item in finish_sales_result if item["amount"])
+
+    # calculations for percent
+    total_finish_item_percent = 0
+    # for item in sales_result:
+    #     item["percent"] = round((item["amount"] * 100) / total_item, 2) if total_item > 0 else 0
+    #     total_item_percent += item["percent"]
+    # end
+    # items_heading = [{"account": "<b>ITEMS DETAIL</b>", "amount": "","percent":""}]
+    # sales_result = items_heading + sales_result
+    finish_sales_row = {"account": "<b>Billing</b>", "amount": finish_total_item, "percent": ""}
+
+    products_sales_query = """
+                SELECT 
+                    "" AS account,
+                    SUM(sii.amount) AS amount,
+                    0 AS percent
+                FROM
+                    `tabSales Invoice Item` AS sii
+                JOIN 
+                    `tabSales Invoice` AS si 
+                    ON sii.parent = si.name
+                WHERE
+                    si.docstatus = 1 
+                    AND si.is_return = 0
+                    AND sii.item_group = 'Products'
+                    AND si.posting_date >= %(from_date)s AND si.posting_date <= %(to_date)s
+            """
+
+    products_sales_result = frappe.db.sql(
+        products_sales_query,
+        {
+            "from_date": filters.get("from_date"),
+            "to_date": filters.get("to_date")
+        },
+        as_dict=True
+    )
+
+    # total_amount_item = sum(item["amount"] for item in sales_result)
+    products_total_item = 0
+    products_total_item = sum(item["amount"] for item in products_sales_result if item["amount"])
+
+    # calculations for percent
+    total_finish_item_percent = 0
+    # for item in sales_result:
+    #     item["percent"] = round((item["amount"] * 100) / total_item, 2) if total_item > 0 else 0
+    #     total_item_percent += item["percent"]
+    # end
+    # items_heading = [{"account": "<b>ITEMS DETAIL</b>", "amount": "","percent":""}]
+    # sales_result = items_heading + sales_result
+    products_sales_row = {"account": "<b>Rejected Fabric Sale</b>", "amount": products_total_item, "percent": ""}
+
+
     gle_query_direct_income = """
             SELECT 
     gle.account AS account,
@@ -251,6 +331,8 @@ def get_data(filters=None):
     profit_loss_heading =  {"account": "<b>PROFIT/LOSS</b>","amount":round(profit_and_loss,2) ,"percent": ""}
 
     data.extend(sales_result)
+    data.append(finish_sales_row)
+    data.append(products_sales_row)
     data.extend(gle_result_direct_income)
     data.extend(gle_result_indirect_income)
     data.extend(gle_result_direct_expense)
