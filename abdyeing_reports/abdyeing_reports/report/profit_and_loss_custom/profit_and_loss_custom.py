@@ -222,13 +222,13 @@ def get_data(filters=None):
     if total_expense > 0:
         for item in gle_result_direct_expense:
             item["percent"] = round((item["amount"] * 100) / total_expense,2) if total_expense > 0 else 0
-            total_direct_expense_percent += item["percent"]
+    total_direct_expense_percent += gle_result_direct_expense[-1]["percent"]
 
     # Calculate percentage for indirect expenses
     if total_expense > 0:
         for item in gle_result_indirect_expense:
             item["percent"] = round((item["amount"] * 100) / total_expense,2) if total_expense > 0 else 0
-            total_indirect_expense_percent += item["percent"]
+    total_indirect_expense_percent += gle_result_indirect_expense[-1]["percent"]
 
     # Append total indirect expenses
     gle_result_indirect_expense.append({
