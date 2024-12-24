@@ -130,42 +130,6 @@ def get_data(filters=None):
     products_sales_row = {"account": "<b>Rejected Fabric Sale</b>", "amount": products_total_item, "percent": ""}
 
 
-    gle_query_direct_income = """
-            SELECT 
-    gle.account AS account,
-    abs(SUM(gle.debit) - SUM(gle.credit)) AS amount,
-    0 AS percent
-    FROM 
-        `tabGL Entry` AS gle
-    WHERE 
-        gle.account IN (
-            SELECT name
-            FROM `tabAccount`
-            WHERE parent_account IN ('Direct Income - ABD')
-            AND root_type = 'Income'
-        )
-        AND gle.posting_date >= %(from_date)s AND gle.posting_date <= %(to_date)s
-    GROUP BY 
-        gle.account
-        """
-    gle_result_direct_income = frappe.db.sql(
-        gle_query_direct_income,
-        {
-            "from_date": filters.get("from_date"),
-            "to_date": filters.get("to_date")
-        },
-        as_dict=True
-    )
-
-    total_amount_direct_income = 0
-    total_amount_direct_income = sum(item["amount"] for item in gle_result_direct_income)
-    # calculations for percent
-    # for item in gle_result_direct_income:
-    #     item["percent"] = (abs(item["amount"]) * 100) / abs(total_amount_direct_income) if abs(total_amount_direct_income) > 0 else 0
-    # end
-    # direct_income_heading = [{"account": "<b>DIRECT INCOME DETAIL</b>",   "amount": "","percent":""}]
-    # gle_result_direct_income = direct_income_heading + gle_result_direct_income
-    # gle_result_direct_income.append({"account": "<b>Total</b>",  "amount": abs(total_amount_direct_income), "percent":""})
 
     gle_query_indirect_income = """
                 SELECT 
@@ -196,25 +160,25 @@ def get_data(filters=None):
 
     total_amount_indirect_income = 0
     total_amount_indirect_income = sum(item["amount"] for item in gle_result_indirect_income)
-    total_income = total_amount_direct_income + total_amount_indirect_income
+    total_income = finish_total_item + products_total_item + total_amount_indirect_income
     # calculations for percent
     total_direct_income_percent = 0
     total_indirect_income_percent = 0
     total_income_percent = 0
-    for item in gle_result_direct_income:
-        item["percent"] = round((abs(item["amount"]) * 100) / abs(total_income),2) if abs(total_income) > 0 else 0
-        total_direct_income_percent += item["percent"]
+    # for item in gle_result_direct_income:
+    #     item["percent"] = round((abs(item["amount"]) * 100) / abs(total_income),2) if abs(total_income) > 0 else 0
+    #     total_direct_income_percent += item["percent"]
     for item in gle_result_indirect_income:
         item["percent"] = round((abs(item["amount"]) * 100) / abs(total_income),2) if abs(total_income) > 0 else 0
         total_indirect_income_percent += item["percent"]
     total_income_percent = total_direct_income_percent + total_indirect_income_percent
     # end
-    # indirect_income_heading = [
-    #     {"account": "<b>INDIRECT INCOME DETAIL</b>",  "amount": "", "percent": ""}]
-    # gle_result_indirect_income = indirect_income_heading + gle_result_indirect_income
+    # finish_percent = round((finish_total_item * 100) / abs(total_income),2) if abs(total_income) > 0 else 0
+    # finish_sales_row['percent'] = finish_percent
+
     gle_result_indirect_income.append(
         {"account": "<b>TOTAL REVENUE</b>", "amount": abs(total_income),
-         "percent": total_income_percent})
+         "percent": ""})
 
     gle_query_direct_expense = """
         SELECT 
@@ -333,7 +297,6 @@ def get_data(filters=None):
     data.extend(sales_result)
     data.append(finish_sales_row)
     data.append(products_sales_row)
-    data.extend(gle_result_direct_income)
     data.extend(gle_result_indirect_income)
     data.extend(gle_result_direct_expense)
     data.extend(gle_result_indirect_expense)
