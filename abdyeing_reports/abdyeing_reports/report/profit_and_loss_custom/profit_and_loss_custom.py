@@ -171,14 +171,15 @@ def get_data(filters=None):
     for item in gle_result_indirect_income:
         item["percent"] = round((abs(item["amount"]) * 100) / abs(total_income),2) if abs(total_income) > 0 else 0
         total_indirect_income_percent += item["percent"]
-    total_income_percent = total_direct_income_percent + total_indirect_income_percent
+
     # end
-    # finish_percent = round((finish_total_item * 100) / abs(total_income),2) if abs(total_income) > 0 else 0
-    # finish_sales_row['percent'] = finish_percent
+    finish_percent = round((finish_total_item * 100) / abs(total_income),2) if abs(total_income) > 0 else 0
+    finish_sales_row['percent'] = finish_percent
+    total_income_percent = finish_percent + total_indirect_income_percent
 
     gle_result_indirect_income.append(
         {"account": "<b>TOTAL REVENUE</b>", "amount": abs(total_income),
-         "percent": ""})
+         "percent": total_income_percent})
 
     gle_query_direct_expense = """
         SELECT 
