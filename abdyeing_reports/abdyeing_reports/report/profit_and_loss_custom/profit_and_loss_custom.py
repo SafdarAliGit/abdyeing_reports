@@ -42,7 +42,7 @@ def get_data(filters=None):
     # calculations for percent
     total_item_percent = 0
     for item in sales_result:
-        item["percent"] = (item["amount"] * 100) / total_item if total_item > 0 else 0
+        item["percent"] = round((item["amount"] * 100) / total_item,2) if total_item > 0 else 0
         total_item_percent += item["percent"]
     # end
     # items_heading = [{"account": "<b>ITEMS DETAIL</b>", "amount": "","percent":""}]
@@ -121,10 +121,10 @@ def get_data(filters=None):
     total_indirect_income_percent = 0
     total_income_percent = 0
     for item in gle_result_direct_income:
-        item["percent"] = (abs(item["amount"]) * 100) / abs(total_income) if abs(total_income) > 0 else 0
+        item["percent"] = round((abs(item["amount"]) * 100) / abs(total_income),2) if abs(total_income) > 0 else 0
         total_direct_income_percent += item["percent"]
     for item in gle_result_indirect_income:
-        item["percent"] = (abs(item["amount"]) * 100) / abs(total_income) if abs(total_income) > 0 else 0
+        item["percent"] = round((abs(item["amount"]) * 100) / abs(total_income),2) if abs(total_income) > 0 else 0
         total_indirect_income_percent += item["percent"]
     total_income_percent = total_direct_income_percent + total_indirect_income_percent
     # end
@@ -168,7 +168,7 @@ def get_data(filters=None):
     total_direct_expense_percent = 0
     if total_amount_direct_expense > 0:
         for item in gle_result_direct_expense:
-            item["percent"] = (item["amount"] * 100) / total_amount_direct_expense
+            item["percent"] = round((item["amount"] * 100) / total_amount_direct_expense,2) if total_amount_direct_expense > 0 else 0
             total_direct_expense_percent += item["percent"]
     else:
         for item in gle_result_direct_expense:
@@ -221,13 +221,13 @@ def get_data(filters=None):
     # Calculate percentage for direct expenses
     if total_expense > 0:
         for item in gle_result_direct_expense:
-            item["percent"] = (item["amount"] * 100) / total_expense
+            item["percent"] = round((item["amount"] * 100) / total_expense,2) if total_expense > 0 else 0
             total_direct_expense_percent += item["percent"]
 
     # Calculate percentage for indirect expenses
     if total_expense > 0:
         for item in gle_result_indirect_expense:
-            item["percent"] = (item["amount"] * 100) / total_expense
+            item["percent"] = round((item["amount"] * 100) / total_expense,2) if total_expense > 0 else 0
             total_indirect_expense_percent += item["percent"]
 
     # Append total indirect expenses
@@ -239,7 +239,9 @@ def get_data(filters=None):
 
     # Combine total expense percentages
     total_expense_percent = total_direct_expense_percent + total_indirect_expense_percent
+    profit_and_loss = total_income - total_expense
     total_expense_row =  {"account": "<b>TOTAL DIRECT & INDIRECT EXPENSES</b>","amount":total_expense ,"percent": total_expense_percent}
+    profit_loss_heading =  {"account": "<b>PROFIT/LOSS</b>","amount":round(profit_and_loss,2) ,"percent": ""}
 
     data.extend(sales_result)
     data.extend(gle_result_direct_income)
@@ -247,7 +249,7 @@ def get_data(filters=None):
     data.extend(gle_result_direct_expense)
     data.extend(gle_result_indirect_expense)
     data.append(total_expense_row)
-    # data.extend(profit_loss_heading)
+    data.append(profit_loss_heading)
     return data
 
 
