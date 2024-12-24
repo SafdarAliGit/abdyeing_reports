@@ -160,7 +160,7 @@ def get_data(filters=None):
 
     total_amount_indirect_income = 0
     total_amount_indirect_income = sum(item["amount"] for item in gle_result_indirect_income)
-    total_income = finish_total_item + products_total_item + total_amount_indirect_income
+    total_income = finish_total_item  + total_amount_indirect_income
     # calculations for percent
     total_direct_income_percent = 0
     total_indirect_income_percent = 0
