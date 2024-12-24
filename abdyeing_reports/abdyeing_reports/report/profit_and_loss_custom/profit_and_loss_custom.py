@@ -239,12 +239,14 @@ def get_data(filters=None):
 
     # Combine total expense percentages
     total_expense_percent = total_direct_expense_percent + total_indirect_expense_percent
+    total_expense_row =  {"account": "<b>TOTAL DIRECT & INDIRECT EXPENSES</b>","amount":total_expense ,"percent": total_expense_percent}
 
     data.extend(sales_result)
     data.extend(gle_result_direct_income)
     data.extend(gle_result_indirect_income)
     data.extend(gle_result_direct_expense)
     data.extend(gle_result_indirect_expense)
+    data.append(total_expense_row)
     # data.extend(profit_loss_heading)
     return data
 
