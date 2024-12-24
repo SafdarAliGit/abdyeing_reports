@@ -23,6 +23,7 @@ def get_data(filters=None):
         WHERE
             si.docstatus = 1 
             AND si.is_return = 0
+            AND sii.item_group = 'Finish'
             AND si.posting_date >= %(from_date)s AND si.posting_date <= %(to_date)s
         GROUP BY 
             sii.item_code
