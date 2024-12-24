@@ -296,8 +296,8 @@ def get_data(filters=None):
 
     data.extend(sales_result)
     data.append(finish_sales_row)
-    data.append(products_sales_row)
     data.extend(gle_result_indirect_income)
+    data.append(products_sales_row)
     data.extend(gle_result_direct_expense)
     data.extend(gle_result_indirect_expense)
     data.append(total_expense_row)
