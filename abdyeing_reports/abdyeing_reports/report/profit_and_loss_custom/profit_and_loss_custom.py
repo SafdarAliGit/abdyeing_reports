@@ -275,12 +275,10 @@ def get_data(filters=None):
 
     # Calculate percentage for indirect expenses
     if total_expense > 0:
-        for item in gle_result_indirect_expense[:-1]:  # Exclude the last item
+        for item in gle_result_indirect_expense:  # Exclude the last item
             item["percent"] = round((item["amount"] * 100) / total_expense, 2) if total_expense > 0 else 0
             total_indirect_expense_percent += item["percent"]
-        # Still calculate "percent" for the last item if needed
-        gle_result_indirect_expense[-1]["percent"] = round(
-            (gle_result_indirect_expense[-1]["amount"] * 100) / total_expense, 2)
+
 
     # Append total indirect expenses
     gle_result_indirect_expense.append({
