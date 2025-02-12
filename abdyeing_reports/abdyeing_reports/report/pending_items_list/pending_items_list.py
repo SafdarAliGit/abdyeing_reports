@@ -44,7 +44,13 @@ def get_columns():
 			"fieldname": "location",
 			"fieldtype": "Data",
 			"width": 150
-		}
+		},
+        {
+            "label": _("Remarks"),
+            "fieldname": "remarks",
+            "fieldtype": "Data",
+            "width": 150
+        }
     ]
     return columns
 
@@ -56,7 +62,8 @@ def get_data(filters):
             gi.dn_no AS dc_no, 
             go.item_code AS item_code, 
             go.qty AS quantity,
-			go.machine AS location
+			go.machine AS location,
+            go.remarks
         FROM 
             `tabGate Outward Pass Items` go
         LEFT JOIN 
